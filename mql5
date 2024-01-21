@@ -1,0 +1,81 @@
+
+// Developer: Forex Robot Easy Team
+// Website: forexroboteasy.com
+// Program Name: Relative Volatility MT5
+
+// Volatility Calculation Function
+double calculateVolatility(double[] prices, int period) {
+    double sum = 0;
+    double average = 0;
+    double volatility = 0;
+
+    // Calculate sum of price differences
+    for (int i = 1; i < period; i++) {
+        sum += Math.Abs(prices[i] - prices[i-1]);
+    }
+
+    // Calculate average
+    average = sum / period;
+
+    // Calculate volatility
+    for (int i = 1; i < period; i++) {
+        volatility += Math.Pow(prices[i] - prices[i-1] - average, 2);
+    }
+    volatility = Math.Sqrt(volatility / period);
+
+    return volatility;
+}
+
+// Trend Analysis Function
+string analyzeTrend(double volatility) {
+    if (volatility < 0.5) {
+        return 'Low Volatility';
+    } else if (volatility > 2.0) {
+        return 'High Volatility';
+    } else {
+        return 'Medium Volatility';
+    }
+}
+
+// Mean-Reversion Strategy Function
+bool meanReversionStrategy(double volatility, double indicatorValue) {
+    if (volatility > 1.5 && indicatorValue > 95) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+// Momentum Strategy Function
+bool momentumStrategy(double volatility, double indicatorValue) {
+    if (volatility > 1.5 && indicatorValue < 5) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+// Main Function
+void OnTick() {
+    double[] prices = new double[100]; // Example array of price data
+    int period = 30; // Example period for volatility calculation
+    double currentVolatility = calculateVolatility(prices, period);
+    string trend = analyzeTrend(currentVolatility);
+
+    // Example usage of mean-reversion strategy
+    if (meanReversionStrategy(currentVolatility, 98)) {
+        // Execute mean-reversion strategy
+        // ...
+        Print('Mean-Reversion Strategy Executed');
+    }
+
+    // Example usage of momentum strategy
+    if (momentumStrategy(currentVolatility, 3)) {
+        // Execute momentum strategy
+        // ...
+        Print('Momentum Strategy Executed');
+    }
+
+    Print('Current Volatility: ', currentVolatility);
+    Print('Trend: ', trend);
+}
